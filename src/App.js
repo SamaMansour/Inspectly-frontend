@@ -6,11 +6,18 @@ import {
   Box,
   Textarea,
   Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
 } from "@chakra-ui/react";
 
 function App() {
   const [code, setCode] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [records, setRecords] = useState([]); // New state for storing records
 
   const handleReview = async () => {
     try {
@@ -25,7 +32,9 @@ function App() {
       }
 
       const data = await response.json();
-      setFeedback(data["data"][0]);
+      const newFeedback = data["data"][0];
+      setFeedback(newFeedback);
+      setRecords([{ code, feedback: newFeedback }, ...records]); // Add new record
     } catch (error) {
       console.error("There was an error fetching the review:", error);
       setFeedback("Error fetching review. Please try again.");
@@ -51,12 +60,29 @@ function App() {
           p={4}
           mb={4}
         />
-        <Button colorScheme="teal" onClick={handleReview}>Review Code</Button>
-        <Box mt={4}>
-          {feedback}
-        </Box>
+        <Button colorScheme="teal" onClick={handleReview}>
+          Review Code
+        </Button>
+        <Box mt={4}>{feedback}</Box>
+        {/* Render records in a table format */}
+        <Table variant="simple" mt={6}>
+          <Thead>
+            <Tr>
+              <Th>Code</Th>
+              <Th>Feedback</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {records.map((record, idx) => (
+              <Tr key={idx}>
+                <Td>{record.code}</Td>
+                <Td>{record.feedback}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
       </Box>
-      <Footer/>
+      <Footer />
     </ChakraProvider>
   );
 }

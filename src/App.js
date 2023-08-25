@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "./components/navbar/Navbar";
+import Footer from "./components/Footer/Footer";
 import {
   ChakraProvider,
   Box,
@@ -55,6 +56,7 @@ function App() {
           {feedback}
         </Box>
       </Box>
+      <Footer/>
     </ChakraProvider>
   );
 }

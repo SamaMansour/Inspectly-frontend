@@ -13,11 +13,14 @@ import {
   Th,
   Td,
 } from "@chakra-ui/react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import About from "./layouts/About";
+import ContactUs from "./layouts/Contact";
 
-function App() {
+function CodeReview() {
   const [code, setCode] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [records, setRecords] = useState([]); // New state for storing records
+  const [records, setRecords] = useState([]);
 
   const handleReview = async () => {
     try {
@@ -34,7 +37,7 @@ function App() {
       const data = await response.json();
       const newFeedback = data["data"][0];
       setFeedback(newFeedback);
-      setRecords([{ code, feedback: newFeedback }, ...records]); // Add new record
+      setRecords([{ code, feedback: newFeedback }, ...records]);
     } catch (error) {
       console.error("There was an error fetching the review:", error);
       setFeedback("Error fetching review. Please try again.");
@@ -42,47 +45,58 @@ function App() {
   };
 
   return (
-    <ChakraProvider>
-      <Navbar />
-      <Box p={4} bg="gray.100" minHeight="100vh">
-        <Textarea
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="Enter your code here..."
-          size="lg"
-          resize="vertical"
-          borderRadius="md"
-          borderColor="teal.400"
-          focusBorderColor="teal.600"
-          boxShadow="md"
-          _hover={{ borderColor: "teal.500" }}
-          _focus={{ boxShadow: "outline" }}
-          p={4}
-          mb={4}
-        />
-        <Button colorScheme="teal" onClick={handleReview}>
-          Review Code
-        </Button>
-        <Box mt={4}>{feedback}</Box>
-        {/* Render records in a table format */}
-        <Table variant="simple" mt={6}>
-          <Thead>
-            <Tr>
-              <Th>Code</Th>
-              <Th>Feedback</Th>
+    <Box p={4} bg="gray.100" minHeight="100vh">
+      <Textarea
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
+        placeholder="Enter your code here..."
+        size="lg"
+        resize="vertical"
+        borderRadius="md"
+        borderColor="teal.400"
+        focusBorderColor="teal.600"
+        boxShadow="md"
+        _hover={{ borderColor: "teal.500" }}
+        _focus={{ boxShadow: "outline" }}
+        p={4}
+        mb={4}
+      />
+      <Button colorScheme="teal" onClick={handleReview}>
+        Review Code
+      </Button>
+      <Box mt={4}>{feedback}</Box>
+      <Table variant="simple" mt={6}>
+        <Thead>
+          <Tr>
+            <Th>Code</Th>
+            <Th>Feedback</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {records.map((record, idx) => (
+            <Tr key={idx}>
+              <Td>{record.code}</Td>
+              <Td>{record.feedback}</Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {records.map((record, idx) => (
-              <Tr key={idx}>
-                <Td>{record.code}</Td>
-                <Td>{record.feedback}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
-      <Footer />
+          ))}
+        </Tbody>
+      </Table>
+    </Box>
+  );
+}
+
+function App() {
+  return (
+    <ChakraProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<CodeReview />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<ContactUs />} />
+        </Routes>
+        <Footer />
+      </Router>
     </ChakraProvider>
   );
 }
